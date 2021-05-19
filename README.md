@@ -1,1 +1,2 @@
-# expectation-maximization
+# Expectation-maximization
+Expectation-maximization (EM) algorithm
