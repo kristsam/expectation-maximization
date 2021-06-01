@@ -15,6 +15,5 @@ def read(file):
 
 def save(pic, filename):
     pil_img = Image.fromarray(np.uint8(pic)).convert('RGB')
-    path = '../data/im1.jpg'
-    pil_img.save(path)
-    print("Image saved in: " + path)
+    pil_img.save(filename)
+    print("Image saved in: " + filename)

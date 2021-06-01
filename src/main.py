@@ -8,4 +8,5 @@ img = 'im'
 K = [2**i for i in range(0, 7)]
 
 x = almost_io.read(path_to_data + img + ".jpg")
-em.em(x, K[0], file_name=path_to_data + img + str(K[0]) + ".jpg")
+for k in K:
+    em.em(x, k, file_name=path_to_data + img + "_k" + str(k) + ".jpg")
