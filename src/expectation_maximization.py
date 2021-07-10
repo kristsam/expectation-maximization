@@ -5,8 +5,8 @@ import almost_io
 # Bishop page 439
 
 
-def error(N, x_t, x_r):
-    return 1 / N * np.sum(x_t - x_r)
+def error(x_t, x_r):
+    return 1 / x_t.shape[0] * (np.linalg.norm(x_t - x_r))**2
 
 
 def gaussian(x, mi, sigma):
@@ -67,7 +67,7 @@ def em(x, K, file_name, is_image=True):
     # num of data
     N = x.shape[0]
 
-    pi = np.full(fill_value=1 / K, shape=(K, 1))
+    pi = np.full(fill_value=1/K, shape=(K, 1))
     # TODO remove nan values
     mi = np.random.uniform(low=0, high=1, size=(K, D))
     sigma = np.random.uniform(low=0, high=1, size=(K, 1))
@@ -92,10 +92,11 @@ def em(x, K, file_name, is_image=True):
             sigma[k] = np.sum(np.dot(np.transpose(gamma[:, k]), np.power(x - mi[k, :], 2))) / D * np.sum(gamma[:, k])
             # print("Iteration = " + str(i + 1) + ", category = " + str(k + 1) + ", error = " + str(error(N, x, mi[k])))
         pi = (np.sum(gamma, axis=0) / N).reshape(-1, 1)
+
         log_lik_old = log_lik_new
         log_lik_new = np.sum(np.log(np.sum(np.multiply(gauss(x, mi, sigma), pi.T), axis=1)))
         print("Log likelihood score = "+str(log_lik_new))
-    kappa = np.argmax(gamma, axis=1)
+    print("\nFor K = "+str(K)+", error = "+str(error(x * 255, mi[np.argmax(gamma, axis=1)] * 255)))
     img_to_save = mi[np.argmax(gamma, axis=1)] * 255
     if is_image:
         img_to_save = img_to_save.reshape(dims + [img_to_save.shape[-1]])
