@@ -6,7 +6,7 @@ import almost_io
 
 
 def error(x_t, x_r):
-    return 1 / x_t.shape[0] * (np.linalg.norm(x_t - x_r))**2
+    return 1 / x_t.shape[0] * (np.linalg.norm(x_t - x_r)) ** 2
 
 
 def gaussian(x, mi, sigma):
@@ -67,20 +67,20 @@ def em(x, K, file_name, is_image=True):
     # num of data
     N = x.shape[0]
 
-    pi = np.full(fill_value=1/K, shape=(K, 1))
+    pi = np.full(fill_value=1 / K, shape=(K, 1))
     # TODO remove nan values
     mi = np.random.uniform(low=0, high=1, size=(K, D))
     sigma = np.random.uniform(low=0, high=1, size=(K, 1))
     # sigma = [np.cov(x.T)*np.identity(x.shape[1]) for z in range(K)]
 
-    # aposteriori probability
+    # a posteriori probability
     gamma = np.empty(shape=(N, K))
 
     log_lik_old = -10000000000
     log_lik_new = -5000000000
 
     while np.abs(log_lik_new - log_lik_old) > 1e-8:
-        # p = np.multiply(pi, guassian(x, mi, sigma))
+        # p = np.multiply(pi, gaussian(x, mi, sigma))
         # E step
         gamma = e_step(x, mi, sigma, pi, K)
         # for n in range(0, N):
@@ -89,14 +89,14 @@ def em(x, K, file_name, is_image=True):
         # M step
         mi = np.dot(gamma.T, x) / np.sum(gamma, axis=0).reshape(-1, 1)
         for k in range(0, K):
-            sigma[k] = np.sum(np.dot(np.transpose(gamma[:, k]), np.power(x - mi[k, :], 2))) / D * np.sum(gamma[:, k])
+            sigma[k] = np.sum(np.dot(np.transpose(gamma[:, k]), np.power(x - mi[k, :], 2))) / (D * np.sum(gamma[:, k]))
             # print("Iteration = " + str(i + 1) + ", category = " + str(k + 1) + ", error = " + str(error(N, x, mi[k])))
         pi = (np.sum(gamma, axis=0) / N).reshape(-1, 1)
 
         log_lik_old = log_lik_new
         log_lik_new = np.sum(np.log(np.sum(np.multiply(gauss(x, mi, sigma), pi.T), axis=1)))
-        print("Log likelihood score = "+str(log_lik_new))
-    print("\nFor K = "+str(K)+", error = "+str(error(x * 255, mi[np.argmax(gamma, axis=1)] * 255)))
+        print("Log likelihood score = " + str(log_lik_new))
+    print("\nFor K = " + str(K) + ", error = " + str(error(x * 255, mi[np.argmax(gamma, axis=1)] * 255)))
     img_to_save = mi[np.argmax(gamma, axis=1)] * 255
     if is_image:
         img_to_save = img_to_save.reshape(dims + [img_to_save.shape[-1]])
