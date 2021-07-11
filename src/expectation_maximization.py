@@ -1,5 +1,4 @@
 import numpy as np
-import almost_io
 
 
 # Bishop page 439
@@ -21,7 +20,7 @@ def gauss(x, mi, sigma):
 def em(x, K):
     """
 
-    :param x: input matrix to be given (e.g pictue)
+    :param x: input matrix to be given (e.g picture)
     :param K: number of clusters
     :return: output matrix
     """
@@ -43,7 +42,7 @@ def em(x, K):
     log_lik_new = -5000000000
 
     iterations = 0
-    print("\nStarting EM process for K = "+str(K)+"...")
+    print("\nStarting EM process for K = " + str(K) + "...")
 
     while np.abs(log_lik_new - log_lik_old) > 1e-5 and iterations < 2000:
 
@@ -61,7 +60,7 @@ def em(x, K):
         log_lik_old = log_lik_new
         log_lik_new = np.sum(np.log(np.sum(np.multiply(gauss(x, mi, sigma), pi.T), axis=1)))
         iterations = iterations + 1
-        print("Iteration = "+str(iterations)+", log likelihood score = " + str(log_lik_new))
+        print("Iteration = " + str(iterations) + ", log likelihood score = " + str(log_lik_new))
 
     print("\nFor K = " + str(K) + ", error = " + str(error(x * 255, mi[np.argmax(gamma, axis=1)] * 255)))
     img_to_save = mi[np.argmax(gamma, axis=1)] * 255
